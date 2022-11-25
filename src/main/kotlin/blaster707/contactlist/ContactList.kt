@@ -1,5 +1,3 @@
 package blaster707.contactlist
 
-class ContactList(array: Array<ContactEntry>) {
-
-}
+data class ContactList(val array: Array<ContactEntry>)

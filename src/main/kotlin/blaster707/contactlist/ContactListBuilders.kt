@@ -1,14 +1,35 @@
 package blaster707.contactlist
 
-object Builder {
+object ContactListBuilders {
 
     fun contactEntryBuilder(): ContactEntry {
 
-        val contactPerson = PersonBuilder().getPersonInput()
+        val contactPerson = personBuilder()
         val addressList = listOf(addressBuilder())
         val phoneNumberList = listOf(phoneNumberBuilder())
 
         return ContactEntry(contactPerson, addressList, phoneNumberList)
+
+    }
+
+    fun personBuilder(): Person{
+        println("What is the first name of the person?")
+        val firstNameInput: String? = readlnOrNull()
+        println("What is the last name of the person?")
+        val lastNameInput: String? = readlnOrNull()
+        if (firstNameInput == null || lastNameInput == null) {throw Exception("Invalid entry; first name and last name are required.  Cancelling addition of this person.")}
+        println("Would you like to add a middle name for this person?  If so, type it here.  Otherwise, press enter.")
+        val middleNameInput: String? = readlnOrNull()
+        println("What is the age of this person?  If you would like to leave this field blank, press enter. Entering anything other than numbers will result in this field being left blank.")
+        val ageInput = readlnOrNull()
+        val ageResult = when {
+            ageInput.isNullOrBlank() -> null
+            ageInput.all { char -> char.isDigit() } -> ageInput.toInt()
+            else -> null
+        }
+
+        val fullNameInput = Name(firstNameInput, lastNameInput, middleNameInput)
+        return Person(fullNameInput, ageResult)
 
     }
 

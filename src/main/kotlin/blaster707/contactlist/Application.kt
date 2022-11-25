@@ -20,7 +20,7 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        httpExample()
+        jsonContactList()
     }
 
     fun httpExample(){
@@ -83,7 +83,7 @@ object Application {
         return Response(Status.NOT_IMPLEMENTED).body("TODO")
     }
 
-    fun jsonExample(){
+    fun jsonContactList(){
         /*val contactEntryX = contactEntryBuilder()
 
         println("${contactEntryX.person.firstName}, ${contactEntryX.person.lastName}")
@@ -92,7 +92,6 @@ object Application {
             println("${phoneNumber.number}\n")
         }
         //println(contactEntryX.addressStringAll(contactEntryX.addressList))*/
-
         /*val json = """
             [
                 {
@@ -120,14 +119,13 @@ object Application {
 
         Files.writeString(Path.of("C:\\Projects\\contacts.json"), newJson)
 */
-        val savedJson = Files.readString(Path.of("C:\\Projects\\contacts.json"))
-        println(savedJson)
+        val savedJsonContactList = Files.readString(Path.of("C:\\Projects\\contacts.json"))
 
-        val savedPeople = Json.decodeFromString<List<PersonX>>(savedJson)
-        for (person in savedPeople) {
-            println(person.firstName)
-            println(person.lastName)
-            println(person.age)
+        val savedContactList = Json.decodeFromString<ContactList>(savedJsonContactList)
+        for (contactEntry in savedContactList.array) {
+            println(contactEntry.firstName)
+            println(contactEntry.lastName)
+            println(contactEntry.age)
         }
     }
 }

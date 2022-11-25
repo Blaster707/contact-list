@@ -14,4 +14,5 @@ data class Address (
         for (addressX in addressList) result = result.plus(StringBuilder.addressString(addressX))
         return result
     }
+
 }

@@ -6,8 +6,9 @@ data class ContactEntry (
     val phoneNumberList: List<PhoneNumber> = emptyList()
     ){
 
-    val firstName = person.firstName
-    val lastName = person.lastName
+    val firstName = person.personName.firstName
+    val lastName = person.personName.lastName
+    val age = person.age
 
 }
 
