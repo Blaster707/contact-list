@@ -19,6 +19,7 @@ data class  ContactEntry (
     }
 }
 
+@Serializable
 data class ContactDetail (
     val person: Person,
     val addressList: List<Address> = emptyList(),

@@ -37,7 +37,31 @@ object Application {
                 lastId = list.contacts.map { it.id.toInt() }.max()
                 list
             }
-            false -> ContactList(mutableListOf())
+            false -> ContactList(mutableListOf(
+                ContactEntry(
+                    "0",
+                    Person(
+                        PersonName("Lucas","Ferguson","Alexander"),
+                        24
+                    ),
+                    listOf(
+                        Address(
+                            "1234",
+                            "Happy Ave",
+                            "NiceTown",
+                            "MN",
+                            "55555-5555",
+                            LocationLabel.Other
+                        )
+                    ),
+                    listOf(
+                        PhoneNumber(
+                            "123-456-7890",
+                            LocationLabel.Other
+                        )
+                    )
+                )
+            ))
         }
 
         for (contactEntry in contactList.contacts) {
@@ -55,6 +79,7 @@ object Application {
             "/contactlist" bind Method.GET to ::handleListAll,
             "/contactlist" bind Method.POST to ::handleAddContactEntry,
             "/contactlist" bind Method.PUT to ::handleUpdatePerson,
+            "/contactlist/details" bind Method.GET to ::handleListAllDetails,
             "/contactlist/save" bind Method.POST to ::handleSavePeople
 
         )
@@ -114,6 +139,10 @@ object Application {
     fun handleListAll(req: Request): Response{
         val summaries = contactList.contacts.map { it.toSummary() }
         return Response(Status.OK).body(Json.encodeToString(summaries))
+    }
+
+    fun handleListAllDetails(req: Request): Response{
+        return Response(Status.OK).body(Json.encodeToString(contactList.contacts.toList()))
     }
 
 
