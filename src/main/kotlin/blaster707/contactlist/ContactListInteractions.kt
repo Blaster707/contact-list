@@ -1,9 +1,9 @@
 package blaster707.contactlist
 
-class ContactListInteractions {
+object ContactListInteractions {
 
-    class Search {
-
+    fun searchMenu() {
+        println("Would you like to search by ")
     }
 
     class AddField {

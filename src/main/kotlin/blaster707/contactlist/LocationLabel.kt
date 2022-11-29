@@ -7,4 +7,7 @@ enum class LocationLabel(val desc: String) {
     Work("Work"),
     Other("Other");
 
+    companion object LabelFunctions{
+        fun labelString(locationLabel: LocationLabel): String { return "$locationLabel" }
+    }
 }

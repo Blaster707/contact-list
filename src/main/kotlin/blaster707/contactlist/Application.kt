@@ -20,7 +20,8 @@ object Application {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        jsonContactList()
+        ApplicationJSON.applicationJSON()
+        //jsonContactList()
     }
 
     fun httpExample(){

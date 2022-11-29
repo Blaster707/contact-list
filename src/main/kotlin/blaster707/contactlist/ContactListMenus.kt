@@ -19,7 +19,7 @@ class ContactListMenus {
             }
             else {
                 when (userInput) {
-                    "1" -> {ContactListInteractions.Search(); contactListStart()}
+                    "1" -> {ContactListInteractions.searchMenu(); contactListStart()}
                     "2" -> {ContactListInteractions.AddContactEntry(); contactListStart()}
                     "3" -> println("Exiting Program")
                 }

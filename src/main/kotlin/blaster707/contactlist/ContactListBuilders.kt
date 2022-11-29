@@ -82,13 +82,3 @@ object ContactListBuilders {
         }
     }
 }
-
-object StringBuilder {
-
-    fun labelString(locationLabel: LocationLabel): String { return "$locationLabel" }
-
-    fun addressString(addressZ: Address): String {
-        return ("${labelString(addressZ.label)} \n${addressZ.addressNumber} ${addressZ.streetName} \n${addressZ.city}, ${addressZ.state} ${addressZ.zipCode}\n")
-    }
-
-}
