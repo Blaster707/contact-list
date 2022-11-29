@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Person (
-    val personName: Name,
+    val name: PersonName,
     val age: Int?
     )
 
 @Serializable
-data class Name (
+data class PersonName (
     val firstName: String,
     val lastName: String,
     val middleName: String?

@@ -2,9 +2,6 @@ package blaster707.contactlist
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.http4k.core.Method
-import org.http4k.routing.bind
-import org.http4k.routing.routes
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -20,7 +17,7 @@ object ApplicationJSON {
 
         val savedContactList = Json.decodeFromString<ContactList>(savedJsonContactList)
 
-        for (contactEntry in savedContactList.array) {
+        for (contactEntry in savedContactList.contacts) {
             println(contactEntry.firstName)
             println(contactEntry.lastName)
             println(contactEntry.age)

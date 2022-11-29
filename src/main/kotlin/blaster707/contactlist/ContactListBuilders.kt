@@ -1,6 +1,6 @@
 package blaster707.contactlist
 
-import kotlin.random.Random
+import java.util.*
 
 object ContactListBuilders {
 
@@ -18,7 +18,7 @@ object ContactListBuilders {
     fun idBuilder(): String {
         println("Please type in an ID Number.")
         val idInput = readln()
-        if (idInput.isBlank()) {println("No input received; assigned random ID."); return Random.nextInt().toString()}
+        if (idInput.isBlank()) {println("No input received; assigned random ID."); return UUID.randomUUID().toString()}
         else {return idInput}
     }
 
@@ -38,7 +38,7 @@ object ContactListBuilders {
             else -> null
         }
 
-        val fullNameInput = Name(firstNameInput, lastNameInput, middleNameInput)
+        val fullNameInput = PersonName(firstNameInput, lastNameInput, middleNameInput)
         return Person(fullNameInput, ageResult)
 
     }

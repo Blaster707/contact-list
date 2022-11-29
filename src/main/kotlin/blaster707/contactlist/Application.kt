@@ -16,22 +16,31 @@ import org.http4k.server.asServer
 import java.nio.file.Files
 import java.nio.file.Path
 
+
 object Application {
+
+    var contactList = ContactList(mutableListOf())
+    var lastId = 0
 
     @JvmStatic
     fun main(args: Array<String>) {
         //ApplicationJSON.applicationJSON()
         //jsonContactList()
 
-        if (!Files.exists(Path.of("C:\\Projects\\contacts.json"))) {
-            Files.createFile(Path.of("C:\\Projects\\contacts.json"))
+        val fileExists = Files.exists(Path.of("C:\\Projects\\contacts.json"))
+
+        contactList = when(fileExists) {
+            true -> {
+                val savedJsonContactList = Files.readString(Path.of("C:\\Projects\\contacts.json"))
+
+                val list = Json.decodeFromString<ContactList>(savedJsonContactList)
+                lastId = list.contacts.map { it.id.toInt() }.max()
+                list
+            }
+            false -> ContactList(mutableListOf())
         }
 
-        val savedJsonContactList = Files.readString(Path.of("C:\\Projects\\contacts.json"))
-
-        val savedContactList = Json.decodeFromString<ContactList>(savedJsonContactList)
-
-        for (contactEntry in savedContactList.array) {
+        for (contactEntry in contactList.contacts) {
             println(contactEntry.firstName)
             println(contactEntry.lastName)
             println(contactEntry.age)
@@ -42,12 +51,12 @@ object Application {
             "/goodbye" bind Method.GET to ::handleGoodbye,
             "/goodbye/{name}" bind Method.GET to ::handleGoodbyeWithPath,
             "/echo" bind Method.POST to ::handleEcho,
-            "/people" bind Method.GET to ::handleListPeople,
-            "/people" bind Method.POST to ::handleAddPerson,
-            "/people" bind Method.PUT to ::handleUpdatePerson,
-            "/people/save" bind Method.POST to ::handleSavePeople,
 
-            "/contactlist/all" bind Method.POST to ::handleListAll
+            "/contactlist" bind Method.GET to ::handleListAll,
+            "/contactlist" bind Method.POST to ::handleAddContactEntry,
+            "/contactlist" bind Method.PUT to ::handleUpdatePerson,
+            "/contactlist/save" bind Method.POST to ::handleSavePeople
+
         )
 
 
@@ -85,11 +94,13 @@ object Application {
         return Response(Status.OK).body(json)
     }
 
-    fun handleAddPerson(req: Request): Response{
+    fun handleAddContactEntry(req: Request): Response{
         val json = req.bodyString()
-        val person = Json.decodeFromString<PersonX>(json)
-
-        return Response(Status.OK).body(person.lastName)
+        val contactDetail = Json.decodeFromString<ContactDetail>(json)
+        lastId += 1
+        val contactEntry = ContactEntry(lastId.toString(), contactDetail.person, contactDetail.addressList, contactDetail.phoneNumberList)
+        contactList.contacts.add(contactEntry)
+        return Response(Status.OK).body(contactEntry.id)
     }
 
     fun handleSavePeople(req: Request): Response{
@@ -101,120 +112,11 @@ object Application {
     }
 
     fun handleListAll(req: Request): Response{
-        return Response(Status.OK).body(ContactList.contactListAll())
+        val summaries = contactList.contacts.map { it.toSummary() }
+        return Response(Status.OK).body(Json.encodeToString(summaries))
     }
 
-    /*fun httpExample(){
-        val app = routes(
-            "/hello" bind Method.GET to ::handleHello,
-            "/goodbye" bind Method.GET to ::handleGoodbye,
-            "/goodbye/{name}" bind Method.GET to ::handleGoodbyeWithPath,
-            "/echo" bind Method.POST to ::handleEcho,
-            "/people" bind Method.GET to ::handleListPeople,
-            "/people" bind Method.POST to ::handleAddPerson,
-            "/people" bind Method.PUT to ::handleUpdatePerson,
-            "/people/save" bind Method.POST to ::handleSavePeople,
 
-            "/contactlist/all" bind Method.POST to ::handleListAll
-        )
-
-        val server = app.asServer(Undertow(8080)).start()
-
-        Thread.sleep(Long.MAX_VALUE)
-        server.stop()
-    }
-
-    fun handleHello(req: Request): Response{
-        return Response(Status.OK).body("Hello from Lucas")
-    }
-
-    fun handleGoodbye(req: Request): Response{
-        return Response(Status.OK).body("Goodbye ${req.query("name")}")
-    }
-
-    fun handleGoodbyeWithPath(req: Request): Response{
-        return Response(Status.OK).body("Goodbye ${req.path("name")} from path")
-    }
-
-    fun handleEcho(req: Request): Response{
-        return Response(Status.OK).body(req.body)
-    }
-
-    fun handleListPeople(req: Request): Response{
-        val people = listOf(
-            PersonX("Lucas", "Ferguson", 24),
-            PersonX("Da-Jour", "Ferguson", 26)
-        )
-
-        val json = Json.encodeToString(people)
-
-        return Response(Status.OK).body(json)
-    }
-
-    fun handleAddPerson(req: Request): Response{
-        val json = req.bodyString()
-        val person = Json.decodeFromString<PersonX>(json)
-
-        return Response(Status.OK).body(person.lastName)
-    }
-
-    fun handleSavePeople(req: Request): Response{
-        return Response(Status.NOT_IMPLEMENTED).body("TODO")
-    }
-
-    fun handleUpdatePerson(req: Request): Response{
-        return Response(Status.NOT_IMPLEMENTED).body("TODO")
-    }
-
-    fun handleListAll(req: Request): Response{
-        return Response(Status.OK).body(ContactList.contactListAll())
-    }
-
-    fun jsonContactList(){
-        /*val contactEntryX = contactEntryBuilder()
-
-        println("${contactEntryX.person.firstName}, ${contactEntryX.person.lastName}")
-        for (phoneNumber in contactEntryX.phoneNumberList) {
-            println(phoneNumber.phoneNumberLabelString())
-            println("${phoneNumber.number}\n")
-        }
-        //println(contactEntryX.addressStringAll(contactEntryX.addressList))*/
-        /*val json = """
-            [
-                {
-                    "firstName": "Lucas",
-                    "lastName": "Ferguson",
-                    "age": 24
-                },
-                {
-                    "firstName": "Da-Jour",
-                    "lastName": "Ferguson",
-                    "age": 26
-                }
-            ]
-        """.trimIndent()
-
-        val people = Json.decodeFromString<List<PersonX>>(json)
-        for (person in people) {
-            println(person.firstName)
-            println(person.lastName)
-            println(person.age)
-        }
-
-        val newJson = Json.encodeToString(people)
-        println(newJson)
-
-        Files.writeString(Path.of("C:\\Projects\\contacts.json"), newJson)
-*/
-        val savedJsonContactList = Files.readString(Path.of("C:\\Projects\\contacts.json"))
-
-        val savedContactList = Json.decodeFromString<ContactList>(savedJsonContactList)
-        for (contactEntry in savedContactList.array) {
-            println(contactEntry.firstName)
-            println(contactEntry.lastName)
-            println(contactEntry.age)
-        }
-    }*/
 }
 
 @Serializable
