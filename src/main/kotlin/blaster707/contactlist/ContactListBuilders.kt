@@ -4,12 +4,21 @@ object ContactListBuilders {
 
     fun contactEntryBuilder(): ContactEntry {
 
+        val contactID = idBuilder()
         val contactPerson = personBuilder()
         val addressList = listOf(addressBuilder())
         val phoneNumberList = listOf(phoneNumberBuilder())
 
-        return ContactEntry(contactPerson, addressList, phoneNumberList)
+        return ContactEntry(contactID, contactPerson, addressList, phoneNumberList)
 
+    }
+
+    fun idBuilder(): String {
+        println("Please type in an ID Number.")
+        val idInput = readln()
+        if (idInput in ContactList.contactListIDSet(TODO())) {
+            
+        }
     }
 
     fun personBuilder(): Person{

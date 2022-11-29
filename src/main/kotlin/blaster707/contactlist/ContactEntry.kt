@@ -3,7 +3,8 @@ package blaster707.contactlist
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ContactEntry (
+data class  ContactEntry (
+    val id: String,
     val person: Person,
     val addressList: List<Address> = emptyList(),
     val phoneNumberList: List<PhoneNumber> = emptyList()
