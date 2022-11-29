@@ -1,5 +1,7 @@
 package blaster707.contactlist
 
+import kotlin.random.Random
+
 object ContactListBuilders {
 
     fun contactEntryBuilder(): ContactEntry {
@@ -16,9 +18,8 @@ object ContactListBuilders {
     fun idBuilder(): String {
         println("Please type in an ID Number.")
         val idInput = readln()
-        if (idInput in ContactList.contactListIDSet(TODO())) {
-            
-        }
+        if (idInput.isBlank()) {println("No input received; assigned random ID."); return Random.nextInt().toString()}
+        else {return idInput}
     }
 
     fun personBuilder(): Person{
