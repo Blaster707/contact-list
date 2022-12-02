@@ -1,6 +1,5 @@
 package blaster707.contactlist
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -71,16 +70,14 @@ object Application {
         }
 
         val app = routes(
-            "/hello" bind Method.GET to ::handleHello,
-            "/goodbye" bind Method.GET to ::handleGoodbye,
-            "/goodbye/{name}" bind Method.GET to ::handleGoodbyeWithPath,
-            "/echo" bind Method.POST to ::handleEcho,
 
             "/contactlist" bind Method.GET to ::handleListAll,
             "/contactlist" bind Method.POST to ::handleAddContactEntry,
             "/contactlist" bind Method.PUT to ::handleUpdatePerson,
+            "/contactlist" bind Method.DELETE to ::handleDeleteContactEntry,
             "/contactlist/details" bind Method.GET to ::handleListAllDetails,
-            "/contactlist/save" bind Method.POST to ::handleSavePeople
+            "/contactlist/save" bind Method.POST to ::handleSavePeople,
+            "/contactlist/{id}" bind Method.GET to ::handleContactEntryDetails,
 
         )
 
@@ -92,33 +89,6 @@ object Application {
 
     }
 
-    fun handleHello(req: Request): Response{
-        return Response(Status.OK).body("Hello from Lucas")
-    }
-
-    fun handleGoodbye(req: Request): Response{
-        return Response(Status.OK).body("Goodbye ${req.query("name")}")
-    }
-
-    fun handleGoodbyeWithPath(req: Request): Response{
-        return Response(Status.OK).body("Goodbye ${req.path("name")} from path")
-    }
-
-    fun handleEcho(req: Request): Response{
-        return Response(Status.OK).body(req.body)
-    }
-
-    fun handleListPeople(req: Request): Response{
-        val people = listOf(
-            PersonX("Lucas", "Ferguson", 24),
-            PersonX("Da-Jour", "Ferguson", 26)
-        )
-
-        val json = Json.encodeToString(people)
-
-        return Response(Status.OK).body(json)
-    }
-
     fun handleAddContactEntry(req: Request): Response{
         val json = req.bodyString()
         val contactDetail = Json.decodeFromString<ContactDetail>(json)
@@ -128,12 +98,24 @@ object Application {
         return Response(Status.OK).body(contactEntry.id)
     }
 
+    fun handleDeleteContactEntry(req: Request): Response{
+        val contactToDelete = req.bodyString()
+        return if (contactList.deleteContactEntry(contactToDelete)) {
+            Response(Status.OK).body("Contact Entry with ID $contactToDelete will be deleted on next save.")
+        } else Response(Status.NOT_FOUND).body("No Contact Entry with ID $contactToDelete located.")
+    }
+
     fun handleSavePeople(req: Request): Response{
-        return Response(Status.NOT_IMPLEMENTED).body("TODO")
+        Files.writeString(Path.of("C:\\Projects\\contacts.json"), Json.encodeToString(contactList))
+        return Response(Status.OK).body("Contact List Saved")
     }
 
     fun handleUpdatePerson(req: Request): Response{
-        return Response(Status.NOT_IMPLEMENTED).body("TODO")
+        val contactToUpdate = Json.decodeFromString<ContactEntry>(req.bodyString())
+        return if (contactList.deleteContactEntry(contactToUpdate.id)) {
+            contactList.contacts.add(contactToUpdate)
+            Response(Status.OK).body("Contact Entry with ID ${contactToUpdate.id} will be updated on next save with the following info:\n\n${Json.encodeToString(contactToUpdate)}")
+        } else Response(Status.NOT_FOUND).body("No Contact Entry with ID ${contactToUpdate.id} located.")
     }
 
     fun handleListAll(req: Request): Response{
@@ -145,8 +127,15 @@ object Application {
         return Response(Status.OK).body(Json.encodeToString(contactList.contacts.toList()))
     }
 
+    fun handleContactEntryDetails(req: Request): Response{
+        val contactEntryQueryId = req.path("id")
+        for (contactEntry in contactList.contacts) {
+            if (contactEntry.id == contactEntryQueryId) {
+                return Response(Status.OK).body(Json.encodeToString(contactEntry))
+            }
+        }
+        return Response(Status.NOT_FOUND).body("No Contact Entry with ID $contactEntryQueryId located.")
+    }
+
 
 }
-
-@Serializable
-data class PersonX (val firstName: String, val lastName: String, val age: Int? = null)

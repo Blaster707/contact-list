@@ -17,6 +17,7 @@ data class  ContactEntry (
     fun toSummary(): ContactSummary {
         return ContactSummary(id, person.name)
     }
+
 }
 
 @Serializable

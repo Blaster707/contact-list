@@ -13,4 +13,14 @@ data class ContactList(val contacts: MutableList<ContactEntry>) {
         return output
     }
 
+    fun deleteContactEntry(contactToDelete: String): Boolean {
+        for (contactEntry in contacts) {
+            if (contactToDelete == contactEntry.id) {
+                Application.contactList.contacts.remove(contactEntry)
+                return true
+            }
+        }
+        return false
+    }
+
 }
