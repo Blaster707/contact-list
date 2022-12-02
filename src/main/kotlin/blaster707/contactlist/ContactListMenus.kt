@@ -16,19 +16,19 @@ class ContactListMenus {
                         println("Exiting Program")
                     }
                 }
-            }
-            else {
+            } else {
                 when (userInput) {
-                    "1" -> {ContactListInteractions.searchMenu(); contactListStart()}
-                    "2" -> {ContactListInteractions.AddContactEntry(); contactListStart()}
+                    "1" -> {
+                        ContactListInteractions.searchMenu(); contactListStart()
+                    }
+
+                    "2" -> {
+                        ContactListInteractions.AddContactEntry(); contactListStart()
+                    }
+
                     "3" -> println("Exiting Program")
                 }
             }
         }
     }
-
-    class ContactEntryMenu {
-
-    }
-
 }
