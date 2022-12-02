@@ -100,7 +100,8 @@ object Application {
 
     fun handleDeleteContactEntry(req: Request): Response{
         val contactToDelete = req.bodyString()
-        return if (contactList.deleteContactEntry(contactToDelete)) {
+        return if (contactList.contactEntryIdLocated(contactToDelete)) {
+            contactList.deleteContactEntry(contactToDelete)
             Response(Status.OK).body("Contact Entry with ID $contactToDelete will be deleted on next save.")
         } else Response(Status.NOT_FOUND).body("No Contact Entry with ID $contactToDelete located.")
     }
@@ -112,7 +113,8 @@ object Application {
 
     fun handleUpdatePerson(req: Request): Response{
         val contactToUpdate = Json.decodeFromString<ContactEntry>(req.bodyString())
-        return if (contactList.deleteContactEntry(contactToUpdate.id)) {
+        return if (contactList.contactEntryIdLocated(contactToUpdate.id)) {
+            contactList.deleteContactEntry(contactToUpdate.id)
             contactList.contacts.add(contactToUpdate)
             Response(Status.OK).body("Contact Entry with ID ${contactToUpdate.id} will be updated on next save with the following info:\n\n${Json.encodeToString(contactToUpdate)}")
         } else Response(Status.NOT_FOUND).body("No Contact Entry with ID ${contactToUpdate.id} located.")
