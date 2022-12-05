@@ -18,8 +18,9 @@ object ContactListBuilders {
     fun idBuilder(): String {
         println("Please type in an ID Number.")
         val idInput = readln()
-        if (idInput.isBlank()) {println("No input received; assigned random ID."); return UUID.randomUUID().toString()}
-        else {return idInput}
+        return idInput.ifBlank {
+            println("No input received; assigned random ID."); UUID.randomUUID().toString()
+        }
     }
 
     fun personBuilder(): Person{
